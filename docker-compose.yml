@@ -1,0 +1,14 @@
+# One-command start:  docker compose --env-file .env.local up --build
+# Then open http://localhost:3000
+services:
+  shop:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_BTAB_API_BASE: ${NEXT_PUBLIC_BTAB_API_BASE:-https://api.btab.app/api/storefront/v1}
+        NEXT_PUBLIC_BTAB_PUBLISHABLE_KEY: ${NEXT_PUBLIC_BTAB_PUBLISHABLE_KEY:?set it in .env.local}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_SHOP_NAME: ${NEXT_PUBLIC_SHOP_NAME:-Starter Shop}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

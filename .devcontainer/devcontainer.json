@@ -1,0 +1,11 @@
+{
+  "name": "btab Storefront Starter",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+  "forwardPorts": [3000],
+  "portsAttributes": { "3000": { "label": "Shop", "onAutoForward": "openBrowser" } },
+  "postCreateCommand": "npm ci && [ -f .env.local ] || cp .env.example .env.local",
+  "customizations": {
+    "vscode": { "extensions": ["dbaeumer.vscode-eslint"] },
+    "codespaces": { "openFiles": ["docs/TUTORIAL.md", ".env.example"] }
+  }
+}
