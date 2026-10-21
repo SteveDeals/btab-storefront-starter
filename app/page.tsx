@@ -1,6 +1,7 @@
-import Image from 'next/image';
+/* eslint-disable @next/next/no-img-element -- photos come from /photo/<token> on this shop's own address */
 import Link from 'next/link';
 import { btab, BtabError } from '@/lib/btab';
+import { photoUrl } from '@/lib/photo';
 import Price from '@/components/Price';
 import StockTag from '@/components/StockTag';
 
@@ -16,8 +17,8 @@ export default async function Home() {
         <div className="grid">
           {products.map((p) => (
             <Link key={p.id} href={`/products/${p.id}`} className="card">
-              {p.image_url ? (
-                <Image src={p.image_url} alt={p.name} width={480} height={480} sizes="(max-width: 720px) 100vw, 260px" />
+              {photoUrl(p.image_url) ? (
+                <img src={photoUrl(p.image_url)!} alt={p.name} width={480} height={480} loading="lazy" />
               ) : (
                 <div className="noimg" />
               )}

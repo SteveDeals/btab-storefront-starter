@@ -1,11 +1,16 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { btab, BtabError, buyState, type CartItemInput, type ProductDetail } from '@/lib/btab';
+import { btab, BtabError, buyState, type CartItemInput, type ProductDetail, type Variant } from '@/lib/btab';
+
+/** Only what the picker needs, so the page sends the browser nothing more. */
+export type PickerProduct = Pick<ProductDetail, 'id' | 'enquiry_only' | 'in_stock' | 'options'> & {
+  variants: Pick<Variant, 'id' | 'available_for_sale' | 'selected_options'>[];
+};
 import { cartId, setCartId } from '@/lib/cart-store';
 
 /** Option picker + Add to cart. Enquiry-only goods get "Enquire"; sold-out goods get a disabled button. */
-export default function AddToCart({ product }: { product: ProductDetail }) {
+export default function AddToCart({ product }: { product: PickerProduct }) {
   const router = useRouter();
   const [picked, setPicked] = useState<Record<string, string>>({});
   const [qty, setQty] = useState(1);
