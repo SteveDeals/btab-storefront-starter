@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element -- btab sends signed image URLs */
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { btab, BtabError } from '@/lib/btab';
 import Price from '@/components/Price';
@@ -19,7 +19,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const image = product.images[0]?.url || product.image_url;
   return (
     <div className="pdp">
-      <div>{image ? <img className="main" src={image} alt={product.images[0]?.alt || product.name} /> : null}</div>
+      <div>{image ? (
+          <Image className="main" src={image} alt={product.images[0]?.alt || product.name} width={800} height={800} sizes="(max-width: 720px) 100vw, 520px" priority />
+        ) : null}</div>
       <div>
         <h1>{product.name}</h1>
         <p>

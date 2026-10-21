@@ -32,7 +32,7 @@ export default function CartPage() {
   const [enquiry, setEnquiry] = useState({ email: '', name: '', message: '' });
   const [enquirySent, setEnquirySent] = useState(false);
 
-  const fail = (e: unknown) => setError(e instanceof BtabError ? `${e.friendly} (${e.code})` : 'Something went wrong.');
+  const fail = (e: unknown) => setError(e instanceof BtabError ? (process.env.NODE_ENV === 'production' ? e.friendly : `${e.friendly} (${e.code})`) : 'Something went wrong.');
 
   const load = useCallback(async () => {
     const id = cartId();
@@ -202,7 +202,7 @@ export default function CartPage() {
         <button disabled={busy || blocked || cart.subtotal_cents === 0} onClick={checkout}>
           Check out
         </button>
-        <p className="muted">You pay on the store’s secure btab checkout.</p>
+        <p className="muted">You pay on our secure checkout.</p>
       </div>
 
       {hasEnquiry ? (

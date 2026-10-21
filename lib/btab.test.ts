@@ -125,3 +125,16 @@ describe('helpers', () => {
     expect(money(null)).toBe('—');
   });
 });
+
+describe('buyer-visible text', () => {
+  it('in production a set-up error never names the key or the API', () => {
+    const old = process.env.NODE_ENV;
+    (process.env as Record<string, string>).NODE_ENV = 'production';
+    try {
+      const msg = new BtabError(403, 'ORIGIN_NOT_ALLOWED', 'x').friendly;
+      expect(msg).not.toMatch(/btab|key|API/i);
+    } finally {
+      (process.env as Record<string, string>).NODE_ENV = old as string;
+    }
+  });
+});

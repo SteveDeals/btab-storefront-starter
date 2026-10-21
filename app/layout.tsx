@@ -7,7 +7,7 @@ const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || 'Starter Shop';
 
 export const metadata: Metadata = {
   title: shopName,
-  description: 'A shop on its own domain, built on the btab Storefront API.',
+  description: process.env.NEXT_PUBLIC_SHOP_DESCRIPTION || 'Homewares, delivered across Australia.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

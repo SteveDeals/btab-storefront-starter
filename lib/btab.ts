@@ -125,8 +125,24 @@ export class BtabError extends Error {
     this.retryAfterSeconds = retryAfterSeconds;
   }
 
-  /** A plain sentence a shopper can read. */
+  /**
+   * A plain sentence a shopper can read. Set-up problems (a wrong key, a site
+   * not on the key's allowed sites) get a hint in development and a neutral
+   * sentence in production, so a buyer never sees the plumbing.
+   */
   get friendly(): string {
+    const dev = process.env.NODE_ENV !== 'production';
+    const setup: Record<string, string> = {
+      KEY_REQUIRED: 'No publishable key. Set NEXT_PUBLIC_BTAB_PUBLISHABLE_KEY in .env.local.',
+      INVALID_KEY: 'The publishable key is not valid or was revoked.',
+      STORE_API_KEY_REFUSED: 'That is a store API key. Use a publishable key (btab_pk_…).',
+      ORIGIN_NOT_ALLOWED: 'This site is not on the key’s allowed sites. Add it in Settings → Developers.',
+      RETURN_URL_NOT_ALLOWED: 'The return address is not on the key’s allowed sites. Check NEXT_PUBLIC_SITE_URL.',
+      STOREFRONT_API_OFF: 'The Storefront API is not open to this store.',
+      TEST_KEY_NOT_OPEN: 'Test keys are not open right now.',
+      NETWORK_ERROR: 'Could not reach the API. Check your connection, and that this site is on the key’s allowed sites (a refused site looks like a network error in the browser).',
+    };
+    if (setup[this.code]) return dev ? setup[this.code] : 'The shop is not available right now. Please try again soon.';
     switch (this.code) {
       case 'RATE_LIMITED':
         return `Too many requests. Please wait ${this.retryAfterSeconds ?? 60} seconds and try again.`;
@@ -134,10 +150,6 @@ export class BtabError extends Error {
         return 'Your cart has expired. Please add the items again.';
       case 'CART_NOT_BUYABLE':
         return 'Some items in your cart cannot be bought online. Remove them or send an enquiry.';
-      case 'RETURN_URL_NOT_ALLOWED':
-        return 'This site is not on the key’s allowed sites, so checkout cannot return here.';
-      case 'ORIGIN_NOT_ALLOWED':
-        return 'This site is not on the key’s allowed sites. Add it in Settings → Developers.';
       default:
         return this.message;
     }
@@ -180,7 +192,7 @@ export function createClient({ baseUrl, publishableKey, fetch: doFetch = globalT
       res = await doFetch(`${base}${path}`, { ...rest, ...caching, headers });
     } catch {
       // A CORS refusal also lands here: the browser hides the answer.
-      throw new BtabError(0, 'NETWORK_ERROR', 'Could not reach btab. Check your connection and that this site is on the key’s allowed sites.');
+      throw new BtabError(0, 'NETWORK_ERROR', 'Could not reach the shop. Check your connection and try again.');
     }
     let body: Record<string, unknown> = {};
     try {
@@ -191,7 +203,7 @@ export function createClient({ baseUrl, publishableKey, fetch: doFetch = globalT
     if (!res.ok || body.success === false) {
       const retry = res.headers.get('Retry-After');
       const code = typeof body.code === 'string' ? body.code : res.status === 429 ? 'RATE_LIMITED' : `HTTP_${res.status}`;
-      const message = typeof body.message === 'string' ? body.message : `btab answered ${res.status}`;
+      const message = typeof body.message === 'string' ? body.message : `The shop answered ${res.status}`;
       throw new BtabError(res.status, code, message, retry ? Number(retry) : null);
     }
     return body as T;

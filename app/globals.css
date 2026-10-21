@@ -9,7 +9,8 @@ header.top .brand { font-weight: 700; text-decoration: none; font-size: 1.15rem;
 main { padding: 24px 0 64px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
 .card { text-decoration: none; display: block; }
-.card img, .pdp img.main { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--soft); border-radius: 8px; }
+.noimg { aspect-ratio: 1; background: var(--soft); border-radius: 8px; }
+.card img, .pdp img.main { width: 100%; aspect-ratio: 1; object-fit: cover; height: auto; background: var(--soft); border-radius: 8px; }
 .card h3 { font-size: 1rem; margin: 10px 0 2px; font-weight: 600; }
 .price { font-weight: 600; }
 .was { color: var(--muted); text-decoration: line-through; margin-left: 6px; font-weight: 400; }
